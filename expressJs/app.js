@@ -3,35 +3,69 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var bodyParser = require('body-parser');
 
 var app = express();
+
+// configure the app to use bodyParser()
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 
 //init react
 // serve the react app files
 console.log("initing react files")
 app.use(express.static(`${__dirname}/react/build`));
-app.get('*', (req, res) => res.sendFile(path.resolve('react', 'build', 'index.html')));
+app.get('/', (req, res) => res.sendFile(path.resolve('react', 'build', 'index.html')));
 
+
+// DB
+const sqlite3 = require('sqlite3').verbose();
+
+// open a database connection
+let db = new sqlite3.Database('./techradar.db');
+
+//tech radar API
+/*
+* Reading and Editing of Tech Entries
+*/
+app.put('/api/tech/:techId', (req, res) => {
+  console.log("PUT request received for specific tech");
+  return res.send(
+    `PUT HTTP method on tech/${req.params.techId} resource`,
+  );
+});
+
+app.get('/api/tech/:techId', (req, res) => {
+  console.log("GET request received for specific tech");
+  return res.send(
+    `PUT HTTP method on tech/${req.params.techId} resource`,
+  );
+});
+
+app.get('/api/tech', (req, res) => {
+  console.log("GET request received for specific tech");
+  return res.send(
+    `GET HTTP method on tech resource`,
+  );
+});
 
 /*
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+* User Management: Registration, Login, etc.
 */
+app.post('/api/register', function(req, res) {
+  console.log(req.body);
+  const { email, password } = req.body;
+  console.log("User attempting to register with: ", email, password);
+});
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-/*
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-*/
-
 
 // catch 404 and forward to error handler + cors
 app.use(function(req, res, next) {
@@ -50,7 +84,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  console.log('error',err);
 });
 
 module.exports = app;
