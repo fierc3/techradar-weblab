@@ -11,7 +11,7 @@ let createUserTable=`
 CREATE TABLE user (
     user_id INTEGER PRIMARY KEY,
     display TEXT NOT NULL,
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     role INTEGER NOT NULL
 );
@@ -46,6 +46,7 @@ CREATE TABLE tech (
     description TEXT NOT NULL,
     description_decision TEXT,
     save_date DATE NOT NULL,
+    public INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES user (user_id)
@@ -53,12 +54,12 @@ CREATE TABLE tech (
 `;
 
 let sampleDataTech=`
-    INSERT INTO tech (name, category, ring, description, save_date, user_id)
-    VALUES ('AWS', ${CATEGORY.Platforms},${RING.Adopt},'Amazon cloud serice', '${new Date().toISOString()}', 1);
-    INSERT INTO tech (name, category, ring, description, save_date, user_id)
-    VALUES ('C#', ${CATEGORY.Languages},${RING.Assess},'Developed by Microsoft for .NET Framework','${new Date().toISOString()}', 1);
-    INSERT INTO tech (name, category, ring, description, save_date, user_id)
-    VALUES ('Scrum', ${CATEGORY.Techniques},${RING.Hold},'Agile Methodology approach', '${new Date().toISOString()}', 1);
+    INSERT INTO tech (name, category, ring, description, save_date, user_id, public)
+    VALUES ('AWS', ${CATEGORY.Platforms},${RING.Adopt},'Amazon cloud serice', '${new Date().toISOString()}', 1,0);
+    INSERT INTO tech (name, category, ring, description, save_date, user_id, public)
+    VALUES ('C#', ${CATEGORY.Languages},${RING.Assess},'Developed by Microsoft for .NET Framework','${new Date().toISOString()}', 1,0);
+    INSERT INTO tech (name, category, ring, description, save_date, user_id, public)
+    VALUES ('Scrum', ${CATEGORY.Techniques},${RING.Hold},'Agile Methodology approach', '${new Date().toISOString()}', 1,0);
 `
 
 db.exec(createTechTable, (err) => {
@@ -71,4 +72,26 @@ db.exec(createTechTable, (err) => {
         }
     })
 }
+})
+
+
+// creating history table and filling it with sample data
+let createHistoryTable=`
+CREATE TABLE history (
+    history_id INTEGER PRIMARY KEY,
+    text TEXT NOT NULL,
+    user_id INTEGER NOT NULL,    
+    tech_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id),    
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id)
+);
+`;
+
+
+db.exec(createHistoryTable, (err) => {
+    if(err){
+        console.warn("Error while creating tech table", err)
+    }
 })
