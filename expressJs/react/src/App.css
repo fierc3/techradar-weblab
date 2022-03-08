@@ -1,0 +1,31 @@
+h1{
+    font-size: 1em;
+}
+
+@media (min-width: 467px) {                  
+    #smallTitle {
+       display: none;
+    }    
+}
+
+@media (max-width: 467px) {   
+    #largeTitle {
+       display: none;
+    }
+
+ }
+
+ @media (max-width: 600px) {   
+    #radar{
+        display: none;
+    }
+    #toolbar{
+        max-width: 100vh;
+    }
+ }
+
+ @media (min-width: 600px) {   
+    #radar-hint{
+        display: none;
+    }
+ }
